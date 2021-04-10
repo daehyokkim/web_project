@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!-- VO 클래스 등록 (mapper.xml에서 vo클래스를 사용할 수 있음) -->
+<configuration>
+ 	<typeAliases>
+ 		<typeAlias type="com.hncompany.dto.MemberVO" alias="memberVO"/>
+ 		<typeAlias type="com.hncompany.dto.RouteVO" alias="routeVO"/>
+ 		<typeAlias type="com.hncompany.dto.MemberNoteVO" alias="memberNoteVO"/>
+        <typeAlias type="com.hncompany.dto.CommentVO" alias="commentVO"/>
+    </typeAliases>	
+</configuration>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<!-- 테이블에서 데이터를 조회하기 위한 쿼리를 작성 -->
+<mapper namespace="com.hncompany.mapper.MemberMapper">
+  <!-- 쿼리 작성 후 데이터가 memberVO에 담김 -->
+   
+    <!--아이디 중복체크 -->
+   <select id="idCheck" resultType="memberVO" >
+      SELECT id FROM User_id Where id = #{id};
+   </select>   
+   
+   <!-- 회원 정보 가져오기  -->
+    <select id="selectMember" resultType="memberVO">
+        SELECT * FROM USER_ID WHERE id=#{id};
+    </select>
+    
+    <!-- 회원 정보 넣기 -->
+    <insert id="insertMember" parameterType="memberVO">
+        INSERT INTO USER_ID(id, pw, name, country, birth) VALUES(#{id}, #{pw}, #{name}, #{country}, #{birth});
+    </insert>
+    
+    <!-- 로그인 -->
+    <select id="login" resultType="memberVO">
+    	SELECT ID,PW FROM USER_ID WHERE ID=#{id} AND PW=#{pw};
+    </select>
+    
+     <!--  해당 나라들과 그 나라의 출발지역만 아는 경우 -->
+    <select id="way1" resultType="routeVO">
+    	SELECT * FROM ROUTE WHERE decon=#{decon} AND arcon=#{arcon} AND demenu=#{demenu};
+    </select>
+    
+    <!--  해당 나라와 해당 지역에 모두 알고 검색하는 경로 -->
+    <select id="way2" resultType="routeVO">
+    	SELECT * FROM ROUTE WHERE decon=#{decon} AND arcon=#{arcon} AND demenu=#{demenu} AND armenu=#{armenu};
+    </select>
+    
+    <!-- 직항 경로로 빠질 때 -->
+    <select id="cnt" resultType="routeVO">
+    	SELECT * FROM ROUTE WHERE cnt=#{cnt};
+    </select>
+    
+    <select id="ch" resultType="routeVO">
+    	SELECT * FROM MYROUTE WHERE cnt=#{cnt} AND id=#{id};
+    </select>
+    
+    <insert id="a" parameterType="routeVO">
+		insert into myroute(id, cnt, decon, demenu, date, detime, time, midcon, midmenu, mid_date, mid_d_time, mtime, arcon, armenu) values(#{id}, #{cnt}, #{decon}, #{demenu}, #{date}, #{detime}, #{time}, #{midcon}, #{midmenu}, #{mid_date}, #{mid_d_time}, #{mtime}, #{arcon}, #{armenu});
+    </insert>
+   
+<!-- 게시판 -->
+    
+	<!-- 게시글 가져오기 -->	
+	<!-- 사용자 정볼 리스트 -->
+	<select id="selectNoteList" resultType="memberNoteVO">
+		SELECT * FROM Note;
+	</select>
+	
+	<select id="selectNote" resultType="memberNoteVO">
+		SELECT * FROM Note where cnt=#{cnt};
+	</select>
+	<!-- 조회수 증가 -->
+	<update id="noteLookup" parameterType="int">
+		update Note set lookup=lookup+1 where cnt=#{cnt};
+	</update>
+	<select id="N_cnt" resultType="int">
+		SELECT count(*) FROM Note;
+	</select>
+	
+	<insert id="insertNote" parameterType="memberNoteVO">
+		INSERT INTO Note(cnt,id,title,main,time) values(#{cnt},#{id},#{title},#{main},SYSDATE());
+	</insert>
+	
+	<!-- 게시글 삭제시 게시판 번호 수정 -->
+	<delete id="deleteNote" parameterType="int">
+		delete from Note where cnt=#{cnt};
+	</delete>
+	
+	<update id="deleteUpdate" parameterType="int">
+		update Note set cnt=cnt-1 where cnt>#{cnt};
+	</update>
+	
+	<!-- 게시글 수정 -->
+	<update id="updateNote" parameterType="memberNoteVO">
+		update Note set title=#{title},main=#{main},time=SYSDATE() where cnt=#{cnt};
+	</update>
+	
+
+<!-- 댓글 쿼리문 -->
+    
+    <!-- 댓글가져오기 -->
+    <select id="commentList" resultType="commentVO">
+    	select * from Comment_user where cnt=#{cnt};
+    </select>
+    <!-- 댓글 총갯수 가져오기 -->
+    <select id="commentCnt" resultType="int">
+		SELECT count(*) FROM Comment_user where cnt=#{cnt};
+    </select>
+    
+    <!-- 댓글입력 -->
+    <insert id="commentAdd" parameterType="commentVO">
+    	insert into Comment_user(cnt,ucnt,id,content) values(#{cnt},#{ucnt},#{id},#{content});
+    </insert>
+    <!-- 댓글삭제 -->
+    <delete id="commentDel" parameterType="commentVO">
+    	delete FROM comment_user where cnt=#{cnt} and ucnt=#{ucnt};
+   	</delete>
+    <update id="commentUp" parameterType="commentVO">
+    	update comment_user SET ucnt=ucnt-1 where cnt=#{cnt} and ucnt>#{ucnt};
+     </update>
+
+    
+<!-- 마이페이지 검색 항로 추가  -->
+    <select id="mypageRoute" resultType="routeVO">
+    	select * from myroute where id=#{id} 
+    </select>
+    <select id="mypageTitle" resultType="memberNoteVO">
+    	select * from Note where id=#{id}
+    </select>
+    <!-- 최근검색내용 전체삭제 -->
+    <delete id="mypageDel" parameterType="String">
+    	delete from myroute where id=#{id};
+    </delete>
+    <!-- 정보수정 -->
+    <update id="mypageUpdate" parameterType="memberVO">
+		update User_id SET name=#{name},birth=#{birth},phone=#{phone} where id=#{id};
+     </update>
+    <!-- 회원탈퇴 --> 
+    <delete id="mypageUserout" parameterType="String">
+    	delete from User_Id where id=#{id};
+    </delete>
+    
+    <delete id="myrouteDel" parameterType="String">
+       delete from myroute where id=#{id};
+    </delete>
+    
+    
+        <!-- 비밀번호 찾기 -->
+	<update id="findPw" parameterType="memberVO">
+		update User_id SET pw=#{pw} where id=#{id} and name=#{name};
+	</update>    
+
+    <update id="mypageUpdatepw" parameterType="memberVO">
+		update User_id SET name=#{name},phone=#{phone},pw=#{pw} where id=#{id};
+    </update>
+    
+</mapper>
